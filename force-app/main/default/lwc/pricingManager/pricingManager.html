@@ -1,303 +1,495 @@
 <template>
-    <lightning-card title="Pricing Manager" icon-name="standard:product">
-        <!-- Main Editor View -->
-        <template if:false={showSummary}>
-            <div class="slds-p-around_medium">
-                <div class="slds-grid slds-wrap slds-gutters">
-                    <!-- Profiles Panel -->
-                    <div class="slds-col slds-size_1-of-1 slds-large-size_5-of-12">
-                        <div class="slds-box slds-box_small slds-theme_shade">
-                            <h3 class="slds-text-heading_small slds-m-bottom_small">Profiles</h3>
-                            <lightning-datatable key-field="id" data={profiles} columns={profileColumns}
-                                onrowselection={handleProfileSelection} max-row-selection="1">
-                            </lightning-datatable>
-                        </div>
-                    </div>
-
-                    <!-- Products Panel -->
-                    <div class="slds-col slds-size_1-of-1 slds-large-size_7-of-12">
-                        <div class="slds-box slds-box_small slds-theme_default">
-                            <div class="slds-grid slds-grid_align-spread slds-m-bottom_small">
-                                <h3 class="slds-text-heading_small">Products</h3>
-                                <div class="slds-grid slds-gutters_xx-small">
-                                    <div class="slds-col">
-                                        <lightning-button-icon icon-name="utility:add" variant="border-filled"
-                                            onclick={handleAddProduct} alternative-text="Add Product"
-                                            title="Add Product"></lightning-button-icon>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="slds-grid slds-gutters slds-m-bottom_small">
-                                <div class="slds-col">
-                                    <lightning-input type="search" variant="label-hidden"
-                                        placeholder="Search products..." value={searchTerm}
-                                        onchange={handleSearchChange}>
-                                    </lightning-input>
-                                </div>
-                                <div class="slds-col">
-                                    <lightning-combobox name="categoryFilter" label="Category" variant="label-hidden"
-                                        placeholder="Filter by Category" value={filterCategory}
-                                        options={categoryFilterOptions} onchange={handleCategoryFilterChange}>
-                                    </lightning-combobox>
-                                </div>
-                            </div>
-
-                            <div style="height: 400px;">
-                                <lightning-datatable key-field="id" data={visibleProducts} columns={productColumns}
-                                    selected-rows={selectedProductIds} draft-values={draftValues}
-                                    onrowselection={handleProductSelection} onrowaction={handleRowAction}
-                                    oncellchange={handleDraftChange} default-sort-direction="asc"
-                                    sorted-direction="asc">
-                                </lightning-datatable>
-                            </div>
-
-                            <div class="slds-m-top_medium slds-grid slds-grid_align-end slds-gutters">
-                                <div class="slds-col">
-                                    <lightning-button variant="neutral" label="Apply Inline Edits"
-                                        onclick={handleSaveDrafts}>
-                                    </lightning-button>
-                                </div>
-                                <div class="slds-col">
-                                    <lightning-button variant="brand" label="Save Pricing Summary"
-                                        onclick={handleSaveSummary} disabled={disableSaveSummary}>
-                                    </lightning-button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </template>
+    <div class="bg-white min-h-screen p-6">
 
         <!-- Summary View -->
-        <template if:true={showSummary}>
-            <div class="slds-p-around_medium">
-                <div class="slds-page-header slds-m-bottom_medium">
-                    <div class="slds-page-header__row">
-                        <div class="slds-page-header__col-title">
-                            <div class="slds-media">
-                                <div class="slds-media__figure">
-                                    <lightning-icon icon-name="standard:report"
-                                        alternative-text="Summary"></lightning-icon>
-                                </div>
-                                <div class="slds-media__body">
-                                    <div class="slds-page-header__name">
-                                        <div class="slds-page-header__name-title">
-                                            <h1><span class="slds-page-header__title slds-truncate"
-                                                    title="Pricing Summary">Pricing Summary</span></h1>
-                                        </div>
+        <template lwc:if={showSummary}>
+            <div class="max-w-6xl mx-auto">
+                <div class="mb-8">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h1 class="text-3xl font-bold text-gray-900 mb-2">Pricing Summary</h1>
+                            <p class="text-gray-600">
+                                Summary of selected products and pricing from {selectedProfileCount} profiles
+                            </p>
+                            <p class="text-sm text-gray-500 mt-1">
+                                Saved on {savedAt}
+                            </p>
+                        </div>
+                        <button onclick={handleBackToProfiles} class="btn btn-secondary">
+                            <lightning-icon icon-name="utility:back" size="x-small" class="mr-2"></lightning-icon>
+                            Back to Profiles
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 gap-6 mb-8">
+                    <div class="bg-blue-50 p-6 rounded-lg">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                                <lightning-icon icon-name="utility:box" size="small" variant="brand"></lightning-icon>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-600">Total Products</p>
+                                <p class="text-2xl font-bold text-gray-900">{totalSummaryProducts}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                    <div class="p-6 border-b border-gray-200">
+                        <h2 class="text-xl font-semibold text-gray-900">Profile Breakdown</h2>
+                    </div>
+                    <div class="p-6 space-y-6">
+                        <template for:each={summaryGroupedProducts} for:item="group">
+                            <div key={group.profileId} class="border border-gray-200 rounded-lg overflow-hidden">
+                                <div class="bg-gray-50 p-4">
+                                    <div class="flex items-center">
+                                        <div class="profile-dot" style={group.dotStyle}></div>
+                                        <h3 class="font-semibold text-gray-900">{group.profileName}</h3>
+                                        <span class="ml-3 text-sm text-gray-500">
+                                            ({group.count} products)
+                                        </span>
                                     </div>
-                                    <p class="slds-page-header__name-meta">
-                                        Saved on <lightning-formatted-date-time value={summaryData.savedAt}
-                                            year="numeric" month="short" day="2-digit" hour="2-digit"
-                                            minute="2-digit"></lightning-formatted-date-time>
-                                    </p>
+                                </div>
+                                <div class="p-4">
+                                    <div class="overflow-x-auto">
+                                        <table class="custom-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Product</th>
+                                                    <th>Supplier Details</th>
+                                                    <th>Category</th>
+                                                    <th class="text-right">Discount</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <template for:each={group.products} for:item="prod">
+                                                    <tr key={prod.id}>
+                                                        <td>
+                                                            <div>
+                                                                <p class="font-medium text-gray-900">{prod.name}</p>
+                                                                <p class="text-sm text-gray-500 mt-1">{prod.description}
+                                                                </p>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="space-y-1">
+                                                                <div class="flex items-center space-x-2">
+                                                                    <span
+                                                                        class="badge badge-blue">{prod.supplierCountry}</span>
+                                                                    <span
+                                                                        class="badge badge-green">{prod.supplier}</span>
+                                                                </div>
+                                                                <div class="flex items-center space-x-2">
+                                                                    <span
+                                                                        class="badge badge-purple">{prod.station}</span>
+                                                                    <span
+                                                                        class="badge badge-orange">{prod.stationGroup}</span>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <span class="badge badge-gray">{prod.category}</span>
+                                                        </td>
+                                                        <td class="text-right">
+                                                            <span class="badge badge-orange">{prod.discount}%</span>
+                                                        </td>
+                                                    </tr>
+                                                </template>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="slds-page-header__col-actions">
-                            <div class="slds-page-header__controls">
-                                <div class="slds-page-header__control">
-                                    <lightning-button label="Back to Editor" onclick={handleBackToEditor}
-                                        icon-name="utility:back"></lightning-button>
-                                </div>
-                            </div>
-                        </div>
+                        </template>
                     </div>
                 </div>
-
-                <div class="slds-grid slds-gutters slds-m-bottom_large">
-                    <div class="slds-col slds-size_1-of-1">
-                        <div class="slds-box slds-theme_shade slds-theme_alert-texture">
-                            <div class="slds-media slds-media_center">
-                                <div class="slds-media__figure">
-                                    <lightning-icon icon-name="utility:products" size="medium"></lightning-icon>
-                                </div>
-                                <div class="slds-media__body">
-                                    <p class="slds-text-heading_small">Total Products</p>
-                                    <p class="slds-text-heading_large slds-text-color_success">
-                                        {summaryData.products.length}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <template for:each={summaryProfileBreakdown} for:item="breakdown">
-                    <div key={breakdown.profileId} class="slds-card slds-m-bottom_medium">
-                        <div class="slds-card__header slds-grid">
-                            <header class="slds-media slds-media_center slds-has-flexi-truncate">
-                                <div class="slds-media__figure">
-                                    <lightning-icon icon-name="standard:user" size="small"></lightning-icon>
-                                </div>
-                                <div class="slds-media__body">
-                                    <h2 class="slds-card__header-title">
-                                        <span class="slds-text-heading_small">{breakdown.profileName}
-                                            ({breakdown.productCount})</span>
-                                    </h2>
-                                </div>
-                            </header>
-                        </div>
-                        <div class="slds-card__body slds-card__body_inner">
-                            <lightning-datatable key-field="id" data={breakdown.products} columns={productColumns}
-                                hide-checkbox-column>
-                            </lightning-datatable>
-                        </div>
-                    </div>
-                </template>
             </div>
         </template>
-    </lightning-card>
 
-    <!-- Form Modal (Add/Edit/Clone) -->
-    <template if:true={showFormModal}>
-        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_medium"
-            aria-labelledby="modal-heading-01" aria-modal="true">
-            <div class="slds-modal__container">
-                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close"
-                    onclick={handleCloseFormModal}>
-                    <lightning-icon icon-name="utility:close" variant="inverse" size="small"></lightning-icon>
-                    <span class="slds-assistive-text">Close</span>
-                </button>
-                <div class="slds-modal__header">
-                    <h1 id="modal-heading-01" class="slds-modal__title slds-hyphenate">{modalTitle}</h1>
+        <!-- Main View -->
+        <template lwc:else>
+            <div class="mb-8">
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-900 mb-2">Profile Management</h1>
+                        <p class="text-gray-600">Select multiple profiles to view grouped products</p>
+                    </div>
                 </div>
-                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
-                    <div class="slds-grid slds-wrap slds-gutters">
-                        <div class="slds-col slds-size_1-of-2">
-                            <lightning-input label="Product Name" data-field="name" value={formData.name}
-                                onchange={handleFormFieldChange} required
-                                message-when-value-missing={formErrors.name}></lightning-input>
+            </div>
+
+            <div class="main-grid">
+                <!-- Profile Selector -->
+                <div class="col-span-1">
+                    <div class="mb-4 flex justify-between items-center">
+                        <h2 class="text-lg font-semibold text-gray-900">Profiles</h2>
+                        <span class="text-sm text-gray-500">{selectedProfileCount} selected</span>
+                    </div>
+
+                    <div class="space-y-4">
+                        <template for:each={profiles} for:item="profile">
+                            <div key={profile.id} class={profile.containerClass} data-id={profile.id}
+                                onclick={handleProfileSelect}>
+                                <div class="flex items-center justify-between mb-2">
+                                    <div class="flex items-center">
+                                        <div class="profile-dot" style={profile.dotStyle}></div>
+                                        <h3 class="font-medium text-gray-900">{profile.name}</h3>
+                                    </div>
+                                    <template lwc:if={profile.isSelected}>
+                                        <lightning-icon icon-name="utility:check" size="x-small"
+                                            variant="brand"></lightning-icon>
+                                    </template>
+                                </div>
+                                <p class="text-sm text-gray-500 mb-3">{profile.description}</p>
+                                <div class="flex items-center justify-between text-xs text-gray-500">
+                                    <span>{profile.productCount} Products</span>
+                                    <template lwc:if={profile.isSelected}>
+                                        <span class="text-blue-600 font-medium">Selected</span>
+                                    </template>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
+                <!-- Product Manager -->
+                <div class="col-span-2">
+                    <template lwc:if={hasProfilesSelected}>
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-xl font-bold text-gray-900">
+                                Products ({selectedProductCount} selected)
+                            </h2>
+                            <div class="flex space-x-2">
+                                <button onclick={handleSaveSummary} class="btn btn-primary" disabled={isSaveDisabled}>
+                                    Save Summary
+                                </button>
+                            </div>
                         </div>
-                        <div class="slds-col slds-size_1-of-2">
-                            <lightning-combobox label="Category" data-field="category" value={formData.category}
-                                options={categoryOptions} onchange={handleFormFieldChange} required
-                                message-when-value-missing={formErrors.category}></lightning-combobox>
+
+                        <!-- Filters -->
+                        <div
+                            class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6 bg-gray-50 p-4 rounded-lg">
+                            <div class="w-full md:w-64 relative">
+                                <lightning-icon icon-name="utility:search" size="x-small"
+                                    class="absolute left-3 top-3 text-gray-400"></lightning-icon>
+                                <input type="text" class="input-field pl-10" placeholder="Search products..."
+                                    value={searchTerm} oninput={handleSearchChange}>
+                            </div>
+                            <div class="flex gap-4 w-full md:w-auto">
+                                <select class="input-field w-full md:w-48" onchange={handleCategoryChange}>
+                                    <option value="all">All Categories</option>
+                                    <template for:each={categories} for:item="cat">
+                                        <option key={cat} value={cat}>{cat}</option>
+                                    </template>
+                                </select>
+                                <select class="input-field w-full md:w-48" onchange={handleSortChange}>
+                                    <option value="name">Name (A-Z)</option>
+                                    <option value="price">Price (High-Low)</option>
+                                    <option value="discount">Discount (High-Low)</option>
+                                    <option value="category">Category</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="slds-col slds-size_1-of-2">
-                            <lightning-input type="number" label="Price" data-field="price" value={formData.price}
-                                onchange={handleFormFieldChange} formatter="currency" step="0.01" required
-                                message-when-value-missing={formErrors.price}></lightning-input>
+
+                        <!-- Product List -->
+                        <div class="space-y-8">
+                            <template for:each={groupedProducts} for:item="group">
+                                <div key={group.profileId} class="border border-gray-200 rounded-lg overflow-hidden">
+                                    <!-- Profile Header -->
+                                    <div class="bg-gray-50 p-4 border-b border-gray-200 cursor-pointer flex justify-between items-center"
+                                        data-id={group.profileId} onclick={toggleProfileExpansion}>
+                                        <div class="flex items-center">
+                                            <lightning-icon icon-name={group.expandIcon} size="x-small"
+                                                class="mr-2"></lightning-icon>
+                                            <div class="profile-dot" style={group.dotStyle}></div>
+                                            <h3 class="font-semibold text-gray-900 text-lg">{group.profileName}</h3>
+                                            <span class="ml-3 text-sm text-gray-500">
+                                                ({group.selectedCount}/{group.totalCount} selected)
+                                            </span>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <button class="text-sm text-blue-600 hover:text-blue-800"
+                                                data-id={group.profileId} onclick={handleSelectAllProfile}>
+                                                {group.selectAllLabel}
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Categories -->
+                                    <template lwc:if={group.isExpanded}>
+                                        <div class="p-4 bg-white">
+                                            <template for:each={group.categories} for:item="catGroup">
+                                                <div key={catGroup.key} class="mb-6 last:mb-0">
+                                                    <!-- Category Header -->
+                                                    <div class="flex items-center mb-3 cursor-pointer"
+                                                        data-key={catGroup.key} onclick={toggleCategoryExpansion}>
+                                                        <lightning-icon icon-name={catGroup.expandIcon} size="x-small"
+                                                            class="mr-2"></lightning-icon>
+                                                        <h4 class="font-medium text-gray-700">{catGroup.name}</h4>
+                                                        <span
+                                                            class="ml-2 text-xs text-gray-500">({catGroup.count})</span>
+                                                    </div>
+
+                                                    <!-- Product Table -->
+                                                    <template lwc:if={catGroup.isExpanded}>
+                                                        <div class="overflow-x-auto border rounded-lg">
+                                                            <table class="custom-table">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th class="w-10">
+                                                                            <input type="checkbox"
+                                                                                checked={catGroup.isAllSelected}
+                                                                                data-key={catGroup.key}
+                                                                                onchange={handleSelectAllCategory}
+                                                                                class="cursor-pointer">
+                                                                        </th>
+                                                                        <th class="w-32">Product ID</th>
+                                                                        <th class="w-32">Supplier</th>
+                                                                        <th class="w-28">Category</th>
+                                                                        <th class="w-20">Curr</th>
+                                                                        <th class="w-24">Discount</th>
+                                                                        <th class="w-24">Surcharge</th>
+                                                                        <th class="w-16 text-right">Actions</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <template for:each={catGroup.products}
+                                                                        for:item="prod">
+                                                                        <tr key={prod.id}>
+                                                                            <td>
+                                                                                <input type="checkbox"
+                                                                                    checked={prod.isSelected}
+                                                                                    data-id={prod.id}
+                                                                                    onchange={handleProductSelect}
+                                                                                    class="cursor-pointer">
+                                                                            </td>
+                                                                            <td>
+                                                                                <div class="font-medium text-gray-900 cursor-pointer hover:text-blue-600"
+                                                                                    data-id={prod.id}
+                                                                                    onclick={handleViewProduct}>
+                                                                                    #{prod.id}
+                                                                                </div>
+                                                                                <div class="text-xs text-gray-500 truncate"
+                                                                                    title={prod.name}>{prod.name}</div>
+                                                                            </td>
+                                                                            <td>
+                                                                                <div class="flex flex-col space-y-1">
+                                                                                    <div class="flex space-x-1">
+                                                                                        <span
+                                                                                            class="badge badge-blue">{prod.supplierCountry}</span>
+                                                                                        <span
+                                                                                            class="badge badge-green">{prod.supplier}</span>
+                                                                                    </div>
+                                                                                    <div class="flex space-x-1">
+                                                                                        <span
+                                                                                            class="badge badge-purple truncate max-w-[80px]">{prod.station}</span>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </td>
+                                                                            <td>
+                                                                                <span
+                                                                                    class="badge badge-gray truncate max-w-[100px]">{prod.category}</span>
+                                                                            </td>
+                                                                            <td>
+                                                                                <span
+                                                                                    class="badge badge-indigo">{prod.currency}</span>
+                                                                            </td>
+                                                                            <!-- Discount Editable Cell -->
+                                                                            <td>
+                                                                                <template
+                                                                                    lwc:if={prod.isEditingDiscount}>
+                                                                                    <div
+                                                                                        class="flex items-center space-x-1">
+                                                                                        <input type="number"
+                                                                                            class="inline-edit-input"
+                                                                                            value={prod.editValue}
+                                                                                            data-id={prod.id}
+                                                                                            data-field="discount"
+                                                                                            oninput={handleEditInput}
+                                                                                            onkeydown={handleEditKeyDown}
+                                                                                            min="0" max="100"
+                                                                                            step="0.01">
+                                                                                        <button
+                                                                                            class="action-btn text-green-600"
+                                                                                            onclick={saveEdit}>
+                                                                                            <lightning-icon
+                                                                                                icon-name="utility:check"
+                                                                                                size="xx-small"></lightning-icon>
+                                                                                        </button>
+                                                                                        <button
+                                                                                            class="action-btn text-red-600"
+                                                                                            onclick={cancelEdit}>
+                                                                                            <lightning-icon
+                                                                                                icon-name="utility:close"
+                                                                                                size="xx-small"></lightning-icon>
+                                                                                        </button>
+                                                                                    </div>
+                                                                                </template>
+                                                                                <template lwc:else>
+                                                                                    <div class="cursor-pointer hover:bg-gray-100 p-1 rounded group flex items-center justify-between"
+                                                                                        data-id={prod.id}
+                                                                                        data-field="discount"
+                                                                                        onclick={startEdit}>
+                                                                                        <span
+                                                                                            class="badge badge-orange">{prod.discount}%</span>
+                                                                                        <lightning-icon
+                                                                                            icon-name="utility:edit"
+                                                                                            size="xx-small"
+                                                                                            class="opacity-0 group-hover:opacity-50"></lightning-icon>
+                                                                                    </div>
+                                                                                </template>
+                                                                            </td>
+                                                                            <!-- Surcharge Editable Cell -->
+                                                                            <td>
+                                                                                <template
+                                                                                    lwc:if={prod.isEditingSurcharge}>
+                                                                                    <div
+                                                                                        class="flex items-center space-x-1">
+                                                                                        <input type="number"
+                                                                                            class="inline-edit-input"
+                                                                                            value={prod.editValue}
+                                                                                            data-id={prod.id}
+                                                                                            data-field="surcharge"
+                                                                                            oninput={handleEditInput}
+                                                                                            onkeydown={handleEditKeyDown}
+                                                                                            min="0" step="0.01">
+                                                                                        <button
+                                                                                            class="action-btn text-green-600"
+                                                                                            onclick={saveEdit}>
+                                                                                            <lightning-icon
+                                                                                                icon-name="utility:check"
+                                                                                                size="xx-small"></lightning-icon>
+                                                                                        </button>
+                                                                                        <button
+                                                                                            class="action-btn text-red-600"
+                                                                                            onclick={cancelEdit}>
+                                                                                            <lightning-icon
+                                                                                                icon-name="utility:close"
+                                                                                                size="xx-small"></lightning-icon>
+                                                                                        </button>
+                                                                                    </div>
+                                                                                </template>
+                                                                                <template lwc:else>
+                                                                                    <div class="cursor-pointer hover:bg-gray-100 p-1 rounded group flex items-center justify-between"
+                                                                                        data-id={prod.id}
+                                                                                        data-field="surcharge"
+                                                                                        onclick={startEdit}>
+                                                                                        <span
+                                                                                            class="text-blue-600 font-semibold text-sm">${prod.surcharge}</span>
+                                                                                        <lightning-icon
+                                                                                            icon-name="utility:edit"
+                                                                                            size="xx-small"
+                                                                                            class="opacity-0 group-hover:opacity-50"></lightning-icon>
+                                                                                    </div>
+                                                                                </template>
+                                                                            </td>
+                                                                            <!-- Actions -->
+                                                                            <td class="text-right relative">
+                                                                                <button class="action-btn"
+                                                                                    data-id={prod.id}
+                                                                                    onclick={toggleRowAction}>
+                                                                                    <lightning-icon
+                                                                                        icon-name="utility:down"
+                                                                                        size="x-small"></lightning-icon>
+                                                                                </button>
+                                                                                <template lwc:if={prod.showActions}>
+                                                                                    <div class="dropdown-menu z-50">
+                                                                                        <button class="dropdown-item"
+                                                                                            data-id={prod.id}
+                                                                                            onclick={handleEditProductModal}>
+                                                                                            <lightning-icon
+                                                                                                icon-name="utility:edit"
+                                                                                                size="x-small"
+                                                                                                class="mr-2"></lightning-icon>
+                                                                                            Edit
+                                                                                        </button>
+                                                                                        <button class="dropdown-item"
+                                                                                            data-id={prod.id}
+                                                                                            onclick={handleCloneProductModal}>
+                                                                                            <lightning-icon
+                                                                                                icon-name="utility:copy"
+                                                                                                size="x-small"
+                                                                                                class="mr-2"></lightning-icon>
+                                                                                            Clone
+                                                                                        </button>
+                                                                                        <button
+                                                                                            class="dropdown-item text-red-600"
+                                                                                            data-id={prod.id}
+                                                                                            onclick={handleDeleteProductModal}>
+                                                                                            <lightning-icon
+                                                                                                icon-name="utility:delete"
+                                                                                                size="x-small"
+                                                                                                class="mr-2"></lightning-icon>
+                                                                                            Delete
+                                                                                        </button>
+                                                                                    </div>
+                                                                                </template>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </template>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </template>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </template>
+                                </div>
+                            </template>
                         </div>
-                        <div class="slds-col slds-size_1-of-2">
-                            <lightning-combobox label="Currency" data-field="currencyCode" value={formData.currencyCode}
-                                options={currencyOptions} onchange={handleFormFieldChange} required
-                                message-when-value-missing={formErrors.currencyCode}></lightning-combobox>
+                    </template>
+                    <template lwc:else>
+                        <div
+                            class="flex flex-col items-center justify-center h-64 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+                            <lightning-icon icon-name="utility:user" size="large"
+                                class="mb-4 text-gray-400"></lightning-icon>
+                            <h3 class="text-lg font-medium text-gray-900">No Profiles Selected</h3>
+                            <p class="text-gray-500 mt-1">Select one or more profiles from the left to view products.
+                            </p>
                         </div>
-                        <div class="slds-col slds-size_1-of-2">
-                            <lightning-input type="number" label="Discount %" data-field="discount"
-                                value={formData.discount} onchange={handleFormFieldChange} min="0" max="100" required
-                                message-when-value-missing={formErrors.discount}></lightning-input>
+                    </template>
+                </div>
+            </div>
+        </template>
+
+        <!-- Modals (Simplified for this step, fleshed out in JS) -->
+        <!-- Product Details Modal -->
+        <template lwc:if={showProductDetailsModal}>
+            <div class="modal-overlay">
+                <div class="modal-content">
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-4">
+                            <h3 class="text-xl font-bold text-gray-900">Product Details</h3>
+                            <button onclick={closeModals} class="text-gray-400 hover:text-gray-500">
+                                <lightning-icon icon-name="utility:close" size="small"></lightning-icon>
+                            </button>
                         </div>
-                        <div class="slds-col slds-size_1-of-2">
-                            <lightning-input type="number" label="Surcharge" data-field="surcharge"
-                                value={formData.surcharge} onchange={handleFormFieldChange}
-                                step="0.01"></lightning-input>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="text-sm font-medium text-gray-500">Product Name</label>
+                                <p class="text-gray-900">{viewingProduct.name}</p>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="text-sm font-medium text-gray-500">Price</label>
+                                    <p class="text-gray-900">{viewingProduct.price} {viewingProduct.currency}</p>
+                                </div>
+                                <div>
+                                    <label class="text-sm font-medium text-gray-500">Category</label>
+                                    <p class="text-gray-900">{viewingProduct.category}</p>
+                                </div>
+                            </div>
+                            <!-- Add more details as needed -->
                         </div>
-                        <div class="slds-col slds-size_1-of-2">
-                            <lightning-combobox label="Supplier" data-field="supplier" value={formData.supplier}
-                                options={supplierOptions} onchange={handleFormFieldChange} required
-                                message-when-value-missing={formErrors.supplier}></lightning-combobox>
-                        </div>
-                        <div class="slds-col slds-size_1-of-2">
-                            <lightning-combobox label="Supplier Country" data-field="supplierCountry"
-                                value={formData.supplierCountry} options={countryOptions}
-                                onchange={handleFormFieldChange} required
-                                message-when-value-missing={formErrors.supplierCountry}></lightning-combobox>
-                        </div>
-                        <div class="slds-col slds-size_1-of-2">
-                            <lightning-combobox label="Station" data-field="station" value={formData.station}
-                                options={stationOptions} onchange={handleFormFieldChange} required
-                                message-when-value-missing={formErrors.station}></lightning-combobox>
-                        </div>
-                        <div class="slds-col slds-size_1-of-2">
-                            <lightning-combobox label="Station Group" data-field="stationGroup"
-                                value={formData.stationGroup} options={stationGroupOptions}
-                                onchange={handleFormFieldChange} required
-                                message-when-value-missing={formErrors.stationGroup}></lightning-combobox>
-                        </div>
-                        <div class="slds-col slds-size_1-of-2">
-                            <lightning-combobox label="Price Model" data-field="priceModel" value={formData.priceModel}
-                                options={priceModelOptions} onchange={handleFormFieldChange} required
-                                message-when-value-missing={formErrors.priceModel}></lightning-combobox>
-                        </div>
-                        <div class="slds-col slds-size_1-of-2">
-                            <lightning-combobox label="Profile" data-field="profileId" value={formData.profileId}
-                                options={profileOptions} onchange={handleFormFieldChange} required
-                                message-when-value-missing={formErrors.profileId}></lightning-combobox>
-                        </div>
-                        <div class="slds-col slds-size_1-of-1">
-                            <lightning-textarea label="Description" data-field="description"
-                                value={formData.description} onchange={handleFormFieldChange}></lightning-textarea>
+                        <div class="mt-6 flex justify-end">
+                            <button onclick={closeModals} class="btn btn-secondary">Close</button>
                         </div>
                     </div>
                 </div>
-                <div class="slds-modal__footer">
-                    <button class="slds-button slds-button_neutral" onclick={handleCloseFormModal}>Cancel</button>
-                    <button class="slds-button slds-button_brand" onclick={handleSaveForm}>{modalSaveLabel}</button>
-                </div>
             </div>
-        </section>
-        <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
-    </template>
+        </template>
 
-    <!-- Delete Confirmation Modal -->
-    <template if:true={showDeleteModal}>
-        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_small"
-            aria-labelledby="modal-heading-02" aria-modal="true">
-            <div class="slds-modal__container">
-                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close"
-                    onclick={handleCloseDeleteModal}>
-                    <lightning-icon icon-name="utility:close" variant="inverse" size="small"></lightning-icon>
-                    <span class="slds-assistive-text">Close</span>
-                </button>
-                <div class="slds-modal__header">
-                    <h1 id="modal-heading-02" class="slds-modal__title slds-hyphenate">Delete Product</h1>
-                </div>
-                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-2">
-                    <p>Are you sure you want to delete this product? This action cannot be undone.</p>
-                    <template if:true={pendingDeleteProduct}>
-                        <p class="slds-m-top_small"><strong>{pendingDeleteProduct.name}</strong></p>
-                    </template>
-                </div>
-                <div class="slds-modal__footer">
-                    <button class="slds-button slds-button_neutral" onclick={handleCloseDeleteModal}>Cancel</button>
-                    <button class="slds-button slds-button_destructive" onclick={handleConfirmDelete}>Delete</button>
-                </div>
-            </div>
-        </section>
-        <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
-    </template>
-
-    <!-- Details Modal -->
-    <template if:true={showDetailsModal}>
-        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_medium"
-            aria-labelledby="modal-heading-03" aria-modal="true">
-            <div class="slds-modal__container">
-                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close"
-                    onclick={handleCloseDetailsModal}>
-                    <lightning-icon icon-name="utility:close" variant="inverse" size="small"></lightning-icon>
-                    <span class="slds-assistive-text">Close</span>
-                </button>
-                <div class="slds-modal__header">
-                    <h1 id="modal-heading-03" class="slds-modal__title slds-hyphenate">Product Details</h1>
-                </div>
-                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-3">
-                    <dl class="slds-list_horizontal slds-wrap">
-                        <template for:each={detailsRows} for:item="row">
-                            <dt key={row.key} class="slds-item_label slds-text-color_weak slds-truncate"
-                                title={row.key}>{row.key}:</dt>
-                            <dd key={row.key} class="slds-item_detail slds-truncate" title={row.value}>{row.value}</dd>
-                        </template>
-                    </dl>
-                </div>
-                <div class="slds-modal__footer">
-                    <button class="slds-button slds-button_neutral" onclick={handleCloseDetailsModal}>Close</button>
-                    <button class="slds-button slds-button_brand" onclick={handleEditFromDetails}>Edit</button>
-                </div>
-            </div>
-        </section>
-        <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
-    </template>
+    </div>
 </template>
