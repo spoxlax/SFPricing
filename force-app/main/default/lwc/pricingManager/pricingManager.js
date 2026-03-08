@@ -83,7 +83,7 @@ export default class PricingManager extends LightningElement {
                     ...profile,
                     isSelected,
                     tags,
-                    containerClass: `profile-card p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer border-2 ${isSelected ? 'border-blue-500 ring-2 ring-blue-200' : 'border-transparent hover:border-gray-200'
+                    containerClass: `profile-card p-6 rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer border-2 ${isSelected ? 'border-blue-500 bg-blue-50 ring-2 ring-blue-200' : 'bg-white border-gray-200 hover:border-blue-300'
                         }`,
                     dotStyle: `background-color: ${profile.color === 'success' ? '#10B981' : profile.color === 'brand' ? '#3B82F6' : '#6B7280'};`
                 };
