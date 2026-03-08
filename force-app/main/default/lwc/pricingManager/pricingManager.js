@@ -23,10 +23,12 @@ export default class PricingManager extends LightningElement {
 
     // Modal state
     @track showFormModal = false;
-    @track showDetailsModal = false;
+    @track showDetailsModal = false; // Note: showProductDetailsModal used in template
+    @track showProductDetailsModal = false;
     @track showDeleteModal = false;
     @track modalMode = 'add'; // 'add' or 'edit'
     @track pendingDeleteProduct = null;
+    @track viewingProduct = null;
     @track activeProduct = null;
     @track formData = this.getEmptyFormData();
     @track formErrors = {};
@@ -34,6 +36,7 @@ export default class PricingManager extends LightningElement {
     // Inline editing state
     @track editingCell = null;
     @track editValue = '';
+    @track activeActionProductId = null;
 
     @wire(getProfiles)
     wiredProfiles({ data, error }) {
@@ -64,9 +67,22 @@ export default class PricingManager extends LightningElement {
             .filter((profile) => !term || profile.name.toLowerCase().includes(term) || profile.description.toLowerCase().includes(term))
             .map((profile) => {
                 const isSelected = this.selectedProfileIds.includes(profile.id);
+
+                // Mock tags for UI parity
+                const tags = profile.id === 1
+                    ? [
+                        { label: 'Generic bundle', class: 'badge-purple' },
+                        { label: 'Valid to: 31/12/2026', class: 'badge-yellow' }
+                    ]
+                    : [
+                        { label: 'Framework', class: 'badge-purple' },
+                        { label: 'Valid to: 31/12/2026', class: 'badge-yellow' }
+                    ];
+
                 return {
                     ...profile,
                     isSelected,
+                    tags,
                     containerClass: `profile-card p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer border-2 ${isSelected ? 'border-blue-500 ring-2 ring-blue-200' : 'border-transparent hover:border-gray-200'
                         }`,
                     dotStyle: `background-color: ${profile.color === 'success' ? '#10B981' : profile.color === 'brand' ? '#3B82F6' : '#6B7280'};`
@@ -155,6 +171,7 @@ export default class PricingManager extends LightningElement {
             // UI Product
             const uiProduct = {
                 ...product,
+                currency: product.currencyCode || 'USD',
                 isSelected: this.selectedProductIds.includes(product.id),
                 isEditingDiscount: this.editingCell === `${product.id}-discount`,
                 isEditingSurcharge: this.editingCell === `${product.id}-surcharge`,
@@ -244,6 +261,11 @@ export default class PricingManager extends LightningElement {
     handleSortChange(event) {
         this.sortBy = event.target.value;
     }
+
+    handleGlobalClick(event) {
+        // No-op for now, kept for future use
+    }
+
 
     // Expansion Handlers
     toggleProfileExpansion(event) {
@@ -388,6 +410,58 @@ export default class PricingManager extends LightningElement {
         this.editValue = '';
     }
 
+    // Data Lists
+    get categoryOptions() {
+        return [
+            'Diesel fuels', 'Caburetor fuels', 'Gas fuels', 'Adblue',
+            'Vehicle cleaning', 'Vehicle accessories', 'Moto oil',
+            'Repair/breakdown', 'Parking fee', 'Tyre service',
+            'Vehicle rental', 'Vehicle services', 'Workshop services'
+        ].map(opt => ({ label: opt, value: opt }));
+    }
+
+    get supplierOptions() {
+        return [
+            'Shell', 'BP', 'Esso', 'Total', 'Texaco', 'Chevron',
+            'Mobil', 'Petro-Canada', 'Sunoco', 'Valero'
+        ].map(opt => ({ label: opt, value: opt }));
+    }
+
+    get countryOptions() {
+        return [
+            'US', 'CA', 'UK', 'DE', 'FR', 'NL', 'IT', 'ES'
+        ].map(opt => ({ label: opt, value: opt }));
+    }
+
+    get stationOptions() {
+        return [
+            'Main Station', 'Highway Station', 'City Center',
+            'Airport Station', 'Shopping Mall', 'Industrial Zone'
+        ].map(opt => ({ label: opt, value: opt }));
+    }
+
+    get stationGroupOptions() {
+        return [
+            'Group A', 'Group B', 'Group C', 'Premium', 'Standard', 'Express'
+        ].map(opt => ({ label: opt, value: opt }));
+    }
+
+    get priceModelOptions() {
+        return [
+            'List', 'Pump', 'Percentage'
+        ].map(opt => ({ label: opt, value: opt }));
+    }
+
+    get currencyOptions() {
+        return [
+            'USD', 'EUR', 'GBP', 'CAD', 'JPY', 'AUD', 'CHF', 'CNY'
+        ].map(opt => ({ label: opt, value: opt }));
+    }
+
+    get profileOptions() {
+        return this.profiles.map(p => ({ label: p.name, value: p.id }));
+    }
+
     // Modal & CRUD Operations
     handleAddProduct() {
         this.modalMode = 'add';
@@ -399,7 +473,8 @@ export default class PricingManager extends LightningElement {
         this.showFormModal = true;
     }
 
-    handleEditProduct(event) {
+    handleEditProductModal(event) {
+        this.activeActionProductId = null;
         const productId = Number(event.currentTarget.dataset.id);
         const product = this.products.find(p => p.id === productId);
         if (!product) return;
@@ -409,7 +484,8 @@ export default class PricingManager extends LightningElement {
         this.showFormModal = true;
     }
 
-    handleCloneProduct(event) {
+    handleCloneProductModal(event) {
+        this.activeActionProductId = null;
         const productId = Number(event.currentTarget.dataset.id);
         const product = this.products.find(p => p.id === productId);
         if (!product) return;
@@ -419,7 +495,8 @@ export default class PricingManager extends LightningElement {
         this.showFormModal = true;
     }
 
-    handleDeleteClick(event) {
+    handleDeleteProductModal(event) {
+        this.activeActionProductId = null;
         const productId = Number(event.currentTarget.dataset.id);
         this.pendingDeleteProduct = this.products.find(p => p.id === productId);
         this.showDeleteModal = true;
@@ -444,6 +521,20 @@ export default class PricingManager extends LightningElement {
     closeModal() {
         this.showFormModal = false;
         this.formErrors = {};
+    }
+
+    closeModals() {
+        this.showProductDetailsModal = false;
+        this.viewingProduct = null;
+    }
+
+    handleViewProduct(event) {
+        const productId = Number(event.currentTarget.dataset.id);
+        const product = this.products.find(p => p.id === productId);
+        if (product) {
+            this.viewingProduct = product;
+            this.showProductDetailsModal = true;
+        }
     }
 
     handleModalChange(event) {
