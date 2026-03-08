@@ -48,6 +48,10 @@ export default class PricingManager extends LightningElement {
         return this.filteredProducts.length > 0;
     }
 
+    get disableSaveSummary() {
+        return !this.hasProducts;
+    }
+
     get selectedProductCount() {
         return this.selectedProductIds.length;
     }
