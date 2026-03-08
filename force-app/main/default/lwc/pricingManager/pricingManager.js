@@ -417,49 +417,81 @@ export default class PricingManager extends LightningElement {
             'Vehicle cleaning', 'Vehicle accessories', 'Moto oil',
             'Repair/breakdown', 'Parking fee', 'Tyre service',
             'Vehicle rental', 'Vehicle services', 'Workshop services'
-        ].map(opt => ({ label: opt, value: opt }));
+        ].map(opt => ({
+            label: opt,
+            value: opt,
+            selected: this.formData.category === opt
+        }));
     }
 
     get supplierOptions() {
         return [
             'Shell', 'BP', 'Esso', 'Total', 'Texaco', 'Chevron',
             'Mobil', 'Petro-Canada', 'Sunoco', 'Valero'
-        ].map(opt => ({ label: opt, value: opt }));
+        ].map(opt => ({
+            label: opt,
+            value: opt,
+            selected: this.formData.supplier === opt
+        }));
     }
 
     get countryOptions() {
         return [
             'US', 'CA', 'UK', 'DE', 'FR', 'NL', 'IT', 'ES'
-        ].map(opt => ({ label: opt, value: opt }));
+        ].map(opt => ({
+            label: opt,
+            value: opt,
+            selected: this.formData.supplierCountry === opt
+        }));
     }
 
     get stationOptions() {
         return [
             'Main Station', 'Highway Station', 'City Center',
             'Airport Station', 'Shopping Mall', 'Industrial Zone'
-        ].map(opt => ({ label: opt, value: opt }));
+        ].map(opt => ({
+            label: opt,
+            value: opt,
+            selected: this.formData.station === opt
+        }));
     }
 
     get stationGroupOptions() {
         return [
             'Group A', 'Group B', 'Group C', 'Premium', 'Standard', 'Express'
-        ].map(opt => ({ label: opt, value: opt }));
+        ].map(opt => ({
+            label: opt,
+            value: opt,
+            selected: this.formData.stationGroup === opt
+        }));
     }
 
     get priceModelOptions() {
         return [
             'List', 'Pump', 'Percentage'
-        ].map(opt => ({ label: opt, value: opt }));
+        ].map(opt => ({
+            label: opt,
+            value: opt,
+            selected: this.formData.priceModel === opt
+        }));
     }
 
     get currencyOptions() {
         return [
             'USD', 'EUR', 'GBP', 'CAD', 'JPY', 'AUD', 'CHF', 'CNY'
-        ].map(opt => ({ label: opt, value: opt }));
+        ].map(opt => ({
+            label: opt,
+            value: opt,
+            selected: this.formData.currencyCode === opt
+        }));
     }
 
     get profileOptions() {
-        return this.profiles.map(p => ({ label: p.name, value: p.id }));
+        return this.profiles.map(p => ({
+            label: p.name,
+            value: p.id,
+            selected: this.formData.profileId === p.id
+        }));
     }
 
     // Modal & CRUD Operations

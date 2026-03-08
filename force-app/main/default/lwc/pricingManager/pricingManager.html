@@ -523,7 +523,7 @@
                                 disabled={isEditMode}>
                                 <option value="">Select Profile</option>
                                 <template for:each={profileOptions} for:item="opt">
-                                    <option key={opt.value} value={opt.value} selected={formData.profileId===opt.value}>
+                                    <option key={opt.value} value={opt.value} selected={opt.selected}>
                                         {opt.label}</option>
                                 </template>
                             </select>
@@ -549,8 +549,8 @@
                                 <select class="input-field" name="supplierCountry" onchange={handleModalChange}>
                                     <option value="">Select Country</option>
                                     <template for:each={countryOptions} for:item="opt">
-                                        <option key={opt.value} value={opt.value}
-                                            selected={formData.supplierCountry===opt.value}>{opt.label}</option>
+                                        <option key={opt.value} value={opt.value} selected={opt.selected}>{opt.label}
+                                        </option>
                                     </template>
                                 </select>
                             </div>
@@ -559,8 +559,8 @@
                                 <select class="input-field" name="supplier" onchange={handleModalChange}>
                                     <option value="">Select Supplier</option>
                                     <template for:each={supplierOptions} for:item="opt">
-                                        <option key={opt.value} value={opt.value}
-                                            selected={formData.supplier===opt.value}>{opt.label}</option>
+                                        <option key={opt.value} value={opt.value} selected={opt.selected}>{opt.label}
+                                        </option>
                                     </template>
                                 </select>
                             </div>
@@ -573,8 +573,8 @@
                                 <select class="input-field" name="station" onchange={handleModalChange}>
                                     <option value="">Select Station</option>
                                     <template for:each={stationOptions} for:item="opt">
-                                        <option key={opt.value} value={opt.value}
-                                            selected={formData.station===opt.value}>{opt.label}</option>
+                                        <option key={opt.value} value={opt.value} selected={opt.selected}>{opt.label}
+                                        </option>
                                     </template>
                                 </select>
                             </div>
@@ -583,8 +583,8 @@
                                 <select class="input-field" name="stationGroup" onchange={handleModalChange}>
                                     <option value="">Select Group</option>
                                     <template for:each={stationGroupOptions} for:item="opt">
-                                        <option key={opt.value} value={opt.value}
-                                            selected={formData.stationGroup===opt.value}>{opt.label}</option>
+                                        <option key={opt.value} value={opt.value} selected={opt.selected}>{opt.label}
+                                        </option>
                                     </template>
                                 </select>
                             </div>
@@ -597,8 +597,8 @@
                                 <select class="input-field" name="priceModel" onchange={handleModalChange}>
                                     <option value="">Select Model</option>
                                     <template for:each={priceModelOptions} for:item="opt">
-                                        <option key={opt.value} value={opt.value}
-                                            selected={formData.priceModel===opt.value}>{opt.label}</option>
+                                        <option key={opt.value} value={opt.value} selected={opt.selected}>{opt.label}
+                                        </option>
                                     </template>
                                 </select>
                             </div>
@@ -607,8 +607,8 @@
                                 <select class="input-field" name="currencyCode" onchange={handleModalChange}>
                                     <option value="">Select Currency</option>
                                     <template for:each={currencyOptions} for:item="opt">
-                                        <option key={opt.value} value={opt.value}
-                                            selected={formData.currencyCode===opt.value}>{opt.label}</option>
+                                        <option key={opt.value} value={opt.value} selected={opt.selected}>{opt.label}
+                                        </option>
                                     </template>
                                 </select>
                             </div>
@@ -644,7 +644,7 @@
                             <select class="input-field" name="category" onchange={handleModalChange}>
                                 <option value="">Select Category</option>
                                 <template for:each={categoryOptions} for:item="opt">
-                                    <option key={opt.value} value={opt.value} selected={formData.category===opt.value}>
+                                    <option key={opt.value} value={opt.value} selected={opt.selected}>
                                         {opt.label}</option>
                                 </template>
                             </select>
