@@ -21,7 +21,7 @@ public with sharing class PricingManagerController {
         @AuraEnabled public String station;
         @AuraEnabled public String stationGroup;
         @AuraEnabled public String priceModel;
-        @AuraEnabled public String currency;
+        @AuraEnabled public String currencyCode;
     }
 
     public class PricingSummaryDto {
@@ -69,7 +69,7 @@ public with sharing class PricingManagerController {
         p1.station = 'Highway Station';
         p1.stationGroup = 'Premium';
         p1.priceModel = 'List';
-        p1.currency = 'USD';
+        p1.currencyCode = 'USD';
         products.add(p1);
 
         ProductDto p2 = new ProductDto();
@@ -86,7 +86,7 @@ public with sharing class PricingManagerController {
         p2.station = 'City Center';
         p2.stationGroup = 'Standard';
         p2.priceModel = 'Pump';
-        p2.currency = 'GBP';
+        p2.currencyCode = 'GBP';
         products.add(p2);
 
         ProductDto p3 = new ProductDto();
@@ -103,7 +103,7 @@ public with sharing class PricingManagerController {
         p3.station = 'Main Station';
         p3.stationGroup = 'Express';
         p3.priceModel = 'Percentage';
-        p3.currency = 'CAD';
+        p3.currencyCode = 'CAD';
         products.add(p3);
 
         ProductDto p4 = new ProductDto();
@@ -120,7 +120,7 @@ public with sharing class PricingManagerController {
         p4.station = 'Industrial Zone';
         p4.stationGroup = 'Group A';
         p4.priceModel = 'List';
-        p4.currency = 'EUR';
+        p4.currencyCode = 'EUR';
         products.add(p4);
 
         ProductDto p5 = new ProductDto();
@@ -137,7 +137,7 @@ public with sharing class PricingManagerController {
         p5.station = 'Shopping Mall';
         p5.stationGroup = 'Group B';
         p5.priceModel = 'Pump';
-        p5.currency = 'USD';
+        p5.currencyCode = 'USD';
         products.add(p5);
 
         ProductDto p6 = new ProductDto();
@@ -154,7 +154,7 @@ public with sharing class PricingManagerController {
         p6.station = 'Main Station';
         p6.stationGroup = 'Express';
         p6.priceModel = 'List';
-        p6.currency = 'CAD';
+        p6.currencyCode = 'CAD';
         products.add(p6);
 
         ProductDto p7 = new ProductDto();
@@ -171,7 +171,7 @@ public with sharing class PricingManagerController {
         p7.station = 'Main Station';
         p7.stationGroup = 'Premium';
         p7.priceModel = 'Percentage';
-        p7.currency = 'EUR';
+        p7.currencyCode = 'EUR';
         products.add(p7);
 
         ProductDto p8 = new ProductDto();
@@ -188,7 +188,7 @@ public with sharing class PricingManagerController {
         p8.station = 'Highway Station';
         p8.stationGroup = 'Express';
         p8.priceModel = 'List';
-        p8.currency = 'CAD';
+        p8.currencyCode = 'CAD';
         products.add(p8);
 
         ProductDto p9 = new ProductDto();
@@ -205,7 +205,7 @@ public with sharing class PricingManagerController {
         p9.station = 'Highway Station';
         p9.stationGroup = 'Premium';
         p9.priceModel = 'Pump';
-        p9.currency = 'USD';
+        p9.currencyCode = 'USD';
         products.add(p9);
 
         ProductDto p10 = new ProductDto();
@@ -222,7 +222,7 @@ public with sharing class PricingManagerController {
         p10.station = 'Airport Station';
         p10.stationGroup = 'Premium';
         p10.priceModel = 'List';
-        p10.currency = 'EUR';
+        p10.currencyCode = 'EUR';
         products.add(p10);
 
         ProductDto p11 = new ProductDto();
@@ -239,7 +239,7 @@ public with sharing class PricingManagerController {
         p11.station = 'Shopping Mall';
         p11.stationGroup = 'Group A';
         p11.priceModel = 'List';
-        p11.currency = 'EUR';
+        p11.currencyCode = 'EUR';
         products.add(p11);
 
         ProductDto p12 = new ProductDto();
@@ -256,7 +256,7 @@ public with sharing class PricingManagerController {
         p12.station = 'Main Station';
         p12.stationGroup = 'Express';
         p12.priceModel = 'Pump';
-        p12.currency = 'USD';
+        p12.currencyCode = 'USD';
         products.add(p12);
 
         return products;

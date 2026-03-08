@@ -8,12 +8,8 @@
                     <div class="slds-col slds-size_1-of-1 slds-large-size_5-of-12">
                         <div class="slds-box slds-box_small slds-theme_shade">
                             <h3 class="slds-text-heading_small slds-m-bottom_small">Profiles</h3>
-                            <lightning-datatable
-                                key-field="id"
-                                data={profiles}
-                                columns={profileColumns}
-                                onrowselection={handleProfileSelection}
-                                max-row-selection="1">
+                            <lightning-datatable key-field="id" data={profiles} columns={profileColumns}
+                                onrowselection={handleProfileSelection} max-row-selection="1">
                             </lightning-datatable>
                         </div>
                     </div>
@@ -25,64 +21,46 @@
                                 <h3 class="slds-text-heading_small">Products</h3>
                                 <div class="slds-grid slds-gutters_xx-small">
                                     <div class="slds-col">
-                                        <lightning-button-icon icon-name="utility:add" variant="border-filled" onclick={handleAddProduct} alternative-text="Add Product" title="Add Product"></lightning-button-icon>
+                                        <lightning-button-icon icon-name="utility:add" variant="border-filled"
+                                            onclick={handleAddProduct} alternative-text="Add Product"
+                                            title="Add Product"></lightning-button-icon>
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div class="slds-grid slds-gutters slds-m-bottom_small">
                                 <div class="slds-col">
-                                    <lightning-input
-                                        type="search"
-                                        variant="label-hidden"
-                                        placeholder="Search products..."
-                                        value={searchTerm}
+                                    <lightning-input type="search" variant="label-hidden"
+                                        placeholder="Search products..." value={searchTerm}
                                         onchange={handleSearchChange}>
                                     </lightning-input>
                                 </div>
                                 <div class="slds-col">
-                                    <lightning-combobox
-                                        name="categoryFilter"
-                                        label="Category"
-                                        variant="label-hidden"
-                                        placeholder="Filter by Category"
-                                        value={filterCategory}
-                                        options={categoryFilterOptions}
-                                        onchange={handleCategoryFilterChange}>
+                                    <lightning-combobox name="categoryFilter" label="Category" variant="label-hidden"
+                                        placeholder="Filter by Category" value={filterCategory}
+                                        options={categoryFilterOptions} onchange={handleCategoryFilterChange}>
                                     </lightning-combobox>
                                 </div>
                             </div>
 
                             <div style="height: 400px;">
-                                <lightning-datatable
-                                    key-field="id"
-                                    data={visibleProducts}
-                                    columns={productColumns}
-                                    selected-rows={selectedProductIds}
-                                    draft-values={draftValues}
-                                    onrowselection={handleProductSelection}
-                                    onrowaction={handleRowAction}
-                                    oncellchange={handleDraftChange}
-                                    default-sort-direction="asc"
-                                    sorted-direction="asc"
-                                    hide-checkbox-column={false}>
+                                <lightning-datatable key-field="id" data={visibleProducts} columns={productColumns}
+                                    selected-rows={selectedProductIds} draft-values={draftValues}
+                                    onrowselection={handleProductSelection} onrowaction={handleRowAction}
+                                    oncellchange={handleDraftChange} default-sort-direction="asc"
+                                    sorted-direction="asc">
                                 </lightning-datatable>
                             </div>
 
                             <div class="slds-m-top_medium slds-grid slds-grid_align-end slds-gutters">
                                 <div class="slds-col">
-                                    <lightning-button
-                                        variant="neutral"
-                                        label="Apply Inline Edits"
+                                    <lightning-button variant="neutral" label="Apply Inline Edits"
                                         onclick={handleSaveDrafts}>
                                     </lightning-button>
                                 </div>
                                 <div class="slds-col">
-                                    <lightning-button
-                                        variant="brand"
-                                        label="Save Pricing Summary"
-                                        onclick={handleSaveSummary}
-                                        disabled={disableSaveSummary}>
+                                    <lightning-button variant="brand" label="Save Pricing Summary"
+                                        onclick={handleSaveSummary} disabled={disableSaveSummary}>
                                     </lightning-button>
                                 </div>
                             </div>
@@ -100,16 +78,20 @@
                         <div class="slds-page-header__col-title">
                             <div class="slds-media">
                                 <div class="slds-media__figure">
-                                    <lightning-icon icon-name="standard:report" alternative-text="Summary"></lightning-icon>
+                                    <lightning-icon icon-name="standard:report"
+                                        alternative-text="Summary"></lightning-icon>
                                 </div>
                                 <div class="slds-media__body">
                                     <div class="slds-page-header__name">
                                         <div class="slds-page-header__name-title">
-                                            <h1><span class="slds-page-header__title slds-truncate" title="Pricing Summary">Pricing Summary</span></h1>
+                                            <h1><span class="slds-page-header__title slds-truncate"
+                                                    title="Pricing Summary">Pricing Summary</span></h1>
                                         </div>
                                     </div>
                                     <p class="slds-page-header__name-meta">
-                                        Saved on <lightning-formatted-date-time value={summaryData.savedAt} year="numeric" month="short" day="2-digit" hour="2-digit" minute="2-digit"></lightning-formatted-date-time>
+                                        Saved on <lightning-formatted-date-time value={summaryData.savedAt}
+                                            year="numeric" month="short" day="2-digit" hour="2-digit"
+                                            minute="2-digit"></lightning-formatted-date-time>
                                     </p>
                                 </div>
                             </div>
@@ -117,7 +99,8 @@
                         <div class="slds-page-header__col-actions">
                             <div class="slds-page-header__controls">
                                 <div class="slds-page-header__control">
-                                    <lightning-button label="Back to Editor" onclick={handleBackToEditor} icon-name="utility:back"></lightning-button>
+                                    <lightning-button label="Back to Editor" onclick={handleBackToEditor}
+                                        icon-name="utility:back"></lightning-button>
                                 </div>
                             </div>
                         </div>
@@ -133,7 +116,8 @@
                                 </div>
                                 <div class="slds-media__body">
                                     <p class="slds-text-heading_small">Total Products</p>
-                                    <p class="slds-text-heading_large slds-text-color_success">{summaryData.products.length}</p>
+                                    <p class="slds-text-heading_large slds-text-color_success">
+                                        {summaryData.products.length}</p>
                                 </div>
                             </div>
                         </div>
@@ -149,16 +133,14 @@
                                 </div>
                                 <div class="slds-media__body">
                                     <h2 class="slds-card__header-title">
-                                        <span class="slds-text-heading_small">{breakdown.profileName} ({breakdown.productCount})</span>
+                                        <span class="slds-text-heading_small">{breakdown.profileName}
+                                            ({breakdown.productCount})</span>
                                     </h2>
                                 </div>
                             </header>
                         </div>
                         <div class="slds-card__body slds-card__body_inner">
-                            <lightning-datatable
-                                key-field="id"
-                                data={breakdown.products}
-                                columns={productColumns}
+                            <lightning-datatable key-field="id" data={breakdown.products} columns={productColumns}
                                 hide-checkbox-column>
                             </lightning-datatable>
                         </div>
@@ -170,9 +152,11 @@
 
     <!-- Form Modal (Add/Edit/Clone) -->
     <template if:true={showFormModal}>
-        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_medium" aria-labelledby="modal-heading-01" aria-modal="true">
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_medium"
+            aria-labelledby="modal-heading-01" aria-modal="true">
             <div class="slds-modal__container">
-                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={handleCloseFormModal}>
+                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close"
+                    onclick={handleCloseFormModal}>
                     <lightning-icon icon-name="utility:close" variant="inverse" size="small"></lightning-icon>
                     <span class="slds-assistive-text">Close</span>
                 </button>
@@ -182,43 +166,70 @@
                 <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
                     <div class="slds-grid slds-wrap slds-gutters">
                         <div class="slds-col slds-size_1-of-2">
-                            <lightning-input label="Product Name" data-field="name" value={formData.name} onchange={handleFormFieldChange} required message-when-value-missing={formErrors.name}></lightning-input>
+                            <lightning-input label="Product Name" data-field="name" value={formData.name}
+                                onchange={handleFormFieldChange} required
+                                message-when-value-missing={formErrors.name}></lightning-input>
                         </div>
                         <div class="slds-col slds-size_1-of-2">
-                            <lightning-combobox label="Category" data-field="category" value={formData.category} options={categoryOptions} onchange={handleFormFieldChange} required message-when-value-missing={formErrors.category}></lightning-combobox>
+                            <lightning-combobox label="Category" data-field="category" value={formData.category}
+                                options={categoryOptions} onchange={handleFormFieldChange} required
+                                message-when-value-missing={formErrors.category}></lightning-combobox>
                         </div>
                         <div class="slds-col slds-size_1-of-2">
-                            <lightning-input type="number" label="Price" data-field="price" value={formData.price} onchange={handleFormFieldChange} formatter="currency" step="0.01" required message-when-value-missing={formErrors.price}></lightning-input>
+                            <lightning-input type="number" label="Price" data-field="price" value={formData.price}
+                                onchange={handleFormFieldChange} formatter="currency" step="0.01" required
+                                message-when-value-missing={formErrors.price}></lightning-input>
                         </div>
                         <div class="slds-col slds-size_1-of-2">
-                            <lightning-combobox label="Currency" data-field="currency" value={formData.currency} options={currencyOptions} onchange={handleFormFieldChange} required message-when-value-missing={formErrors.currency}></lightning-combobox>
+                            <lightning-combobox label="Currency" data-field="currencyCode" value={formData.currencyCode}
+                                options={currencyOptions} onchange={handleFormFieldChange} required
+                                message-when-value-missing={formErrors.currencyCode}></lightning-combobox>
                         </div>
                         <div class="slds-col slds-size_1-of-2">
-                            <lightning-input type="number" label="Discount %" data-field="discount" value={formData.discount} onchange={handleFormFieldChange} min="0" max="100" required message-when-value-missing={formErrors.discount}></lightning-input>
+                            <lightning-input type="number" label="Discount %" data-field="discount"
+                                value={formData.discount} onchange={handleFormFieldChange} min="0" max="100" required
+                                message-when-value-missing={formErrors.discount}></lightning-input>
                         </div>
                         <div class="slds-col slds-size_1-of-2">
-                            <lightning-input type="number" label="Surcharge" data-field="surcharge" value={formData.surcharge} onchange={handleFormFieldChange} step="0.01"></lightning-input>
+                            <lightning-input type="number" label="Surcharge" data-field="surcharge"
+                                value={formData.surcharge} onchange={handleFormFieldChange}
+                                step="0.01"></lightning-input>
                         </div>
                         <div class="slds-col slds-size_1-of-2">
-                            <lightning-combobox label="Supplier" data-field="supplier" value={formData.supplier} options={supplierOptions} onchange={handleFormFieldChange} required message-when-value-missing={formErrors.supplier}></lightning-combobox>
+                            <lightning-combobox label="Supplier" data-field="supplier" value={formData.supplier}
+                                options={supplierOptions} onchange={handleFormFieldChange} required
+                                message-when-value-missing={formErrors.supplier}></lightning-combobox>
                         </div>
                         <div class="slds-col slds-size_1-of-2">
-                            <lightning-combobox label="Supplier Country" data-field="supplierCountry" value={formData.supplierCountry} options={countryOptions} onchange={handleFormFieldChange} required message-when-value-missing={formErrors.supplierCountry}></lightning-combobox>
+                            <lightning-combobox label="Supplier Country" data-field="supplierCountry"
+                                value={formData.supplierCountry} options={countryOptions}
+                                onchange={handleFormFieldChange} required
+                                message-when-value-missing={formErrors.supplierCountry}></lightning-combobox>
                         </div>
                         <div class="slds-col slds-size_1-of-2">
-                            <lightning-combobox label="Station" data-field="station" value={formData.station} options={stationOptions} onchange={handleFormFieldChange} required message-when-value-missing={formErrors.station}></lightning-combobox>
+                            <lightning-combobox label="Station" data-field="station" value={formData.station}
+                                options={stationOptions} onchange={handleFormFieldChange} required
+                                message-when-value-missing={formErrors.station}></lightning-combobox>
                         </div>
                         <div class="slds-col slds-size_1-of-2">
-                            <lightning-combobox label="Station Group" data-field="stationGroup" value={formData.stationGroup} options={stationGroupOptions} onchange={handleFormFieldChange} required message-when-value-missing={formErrors.stationGroup}></lightning-combobox>
+                            <lightning-combobox label="Station Group" data-field="stationGroup"
+                                value={formData.stationGroup} options={stationGroupOptions}
+                                onchange={handleFormFieldChange} required
+                                message-when-value-missing={formErrors.stationGroup}></lightning-combobox>
                         </div>
                         <div class="slds-col slds-size_1-of-2">
-                            <lightning-combobox label="Price Model" data-field="priceModel" value={formData.priceModel} options={priceModelOptions} onchange={handleFormFieldChange} required message-when-value-missing={formErrors.priceModel}></lightning-combobox>
+                            <lightning-combobox label="Price Model" data-field="priceModel" value={formData.priceModel}
+                                options={priceModelOptions} onchange={handleFormFieldChange} required
+                                message-when-value-missing={formErrors.priceModel}></lightning-combobox>
                         </div>
                         <div class="slds-col slds-size_1-of-2">
-                            <lightning-combobox label="Profile" data-field="profileId" value={formData.profileId} options={profileOptions} onchange={handleFormFieldChange} required message-when-value-missing={formErrors.profileId}></lightning-combobox>
+                            <lightning-combobox label="Profile" data-field="profileId" value={formData.profileId}
+                                options={profileOptions} onchange={handleFormFieldChange} required
+                                message-when-value-missing={formErrors.profileId}></lightning-combobox>
                         </div>
                         <div class="slds-col slds-size_1-of-1">
-                            <lightning-textarea label="Description" data-field="description" value={formData.description} onchange={handleFormFieldChange}></lightning-textarea>
+                            <lightning-textarea label="Description" data-field="description"
+                                value={formData.description} onchange={handleFormFieldChange}></lightning-textarea>
                         </div>
                     </div>
                 </div>
@@ -233,9 +244,11 @@
 
     <!-- Delete Confirmation Modal -->
     <template if:true={showDeleteModal}>
-        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_small" aria-labelledby="modal-heading-02" aria-modal="true">
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_small"
+            aria-labelledby="modal-heading-02" aria-modal="true">
             <div class="slds-modal__container">
-                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={handleCloseDeleteModal}>
+                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close"
+                    onclick={handleCloseDeleteModal}>
                     <lightning-icon icon-name="utility:close" variant="inverse" size="small"></lightning-icon>
                     <span class="slds-assistive-text">Close</span>
                 </button>
@@ -259,9 +272,11 @@
 
     <!-- Details Modal -->
     <template if:true={showDetailsModal}>
-        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_medium" aria-labelledby="modal-heading-03" aria-modal="true">
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_medium"
+            aria-labelledby="modal-heading-03" aria-modal="true">
             <div class="slds-modal__container">
-                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={handleCloseDetailsModal}>
+                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close"
+                    onclick={handleCloseDetailsModal}>
                     <lightning-icon icon-name="utility:close" variant="inverse" size="small"></lightning-icon>
                     <span class="slds-assistive-text">Close</span>
                 </button>
@@ -271,7 +286,8 @@
                 <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-3">
                     <dl class="slds-list_horizontal slds-wrap">
                         <template for:each={detailsRows} for:item="row">
-                            <dt key={row.key} class="slds-item_label slds-text-color_weak slds-truncate" title={row.key}>{row.key}:</dt>
+                            <dt key={row.key} class="slds-item_label slds-text-color_weak slds-truncate"
+                                title={row.key}>{row.key}:</dt>
                             <dd key={row.key} class="slds-item_detail slds-truncate" title={row.value}>{row.value}</dd>
                         </template>
                     </dl>

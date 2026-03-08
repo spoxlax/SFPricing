@@ -9,7 +9,7 @@ const ROW_ACTIONS = [{ label: 'View', name: 'view' }, { label: 'Edit', name: 'ed
 const PRODUCT_COLUMNS = [
     { label: 'Name', fieldName: 'name' },
     { label: 'Category', fieldName: 'category' },
-    { label: 'Price', fieldName: 'price', type: 'currency', typeAttributes: { currencyCode: { fieldName: 'currency' } } },
+    { label: 'Price', fieldName: 'price', type: 'currency', typeAttributes: { currencyCode: { fieldName: 'currencyCode' } } },
     { label: 'Discount %', fieldName: 'discount', type: 'number' },
     { label: 'Surcharge', fieldName: 'surcharge', type: 'number' },
     { label: 'Supplier', fieldName: 'supplier' },
@@ -221,7 +221,7 @@ export default class PricingManager extends LightningElement {
         return [
             { key: 'Name', value: this.activeProduct.name },
             { key: 'Category', value: this.activeProduct.category },
-            { key: 'Price', value: `${this.activeProduct.price} ${this.activeProduct.currency}` },
+            { key: 'Price', value: `${this.activeProduct.price} ${this.activeProduct.currencyCode}` },
             { key: 'Discount', value: `${this.activeProduct.discount}%` },
             { key: 'Surcharge', value: `${this.activeProduct.surcharge}` },
             { key: 'Supplier', value: this.activeProduct.supplier },
@@ -329,7 +329,7 @@ export default class PricingManager extends LightningElement {
             station: source.station || '',
             stationGroup: source.stationGroup || '',
             priceModel: source.priceModel || '',
-            currency: source.currency || ''
+            currencyCode: source.currencyCode || ''
         };
         this.showFormModal = true;
     }
@@ -393,7 +393,7 @@ export default class PricingManager extends LightningElement {
             station: this.formData.station,
             stationGroup: this.formData.stationGroup,
             priceModel: this.formData.priceModel,
-            currency: this.formData.currency
+            currencyCode: this.formData.currencyCode
         };
 
         if (this.modalMode === 'edit') {
@@ -482,7 +482,7 @@ export default class PricingManager extends LightningElement {
             station: '',
             stationGroup: '',
             priceModel: '',
-            currency: ''
+            currencyCode: ''
         };
     }
 
@@ -521,8 +521,8 @@ export default class PricingManager extends LightningElement {
         if (!this.formData.priceModel) {
             errors.priceModel = 'Price model is required';
         }
-        if (!this.formData.currency) {
-            errors.currency = 'Currency is required';
+        if (!this.formData.currencyCode) {
+            errors.currencyCode = 'Currency is required';
         }
         this.formErrors = errors;
         return Object.keys(errors).length === 0;
